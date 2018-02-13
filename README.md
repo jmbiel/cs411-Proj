@@ -1,2 +1,10 @@
 # cs411-Proj
-Project for CAS CS-411 (Software Engineering) at Boston University
+
+## Group Members:
+    1. Nico Bermudez
+    2. Zirui Liu
+    3. Max Biel
+    4. Rahul Jain
+
+## Project Ideas:
+### 1) Nightlife Reccomendations:
