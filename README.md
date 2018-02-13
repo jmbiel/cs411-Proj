@@ -19,3 +19,8 @@
     Goal: Profile the user to determine their level of risk adversity.  Based on this, recommend investment portfolios and show live feed of how each one is trending.
 
     How: Use facebook and amazon to profile the user and determine their level of risk adversity.  Use Yahoo Finance to recommend a portfolio balanced with stocks, short term reserves, and bonds.
+
+### 3) Combined Music Platform:
+    Goal: To create a centralized platform for all existing music services.  Allow a user to connect all subscription services, and create playlists which include music from all of them.
+
+    How: Use the numerous web-APIs included in all of the services (Soundcloud, Spotify, Apple Music, Amazon Music) - similar to how the sonos system might do this.
