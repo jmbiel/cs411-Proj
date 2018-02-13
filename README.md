@@ -14,3 +14,8 @@
         3. Reviews
 
     How: Utilize uber movement data to determine which places are in highly frequented areas. Use yelp API to access reviews - potentially do lexical analysis to look for key words that the user prefers.  Use Boston public dataset of all bars, restuarants, and clubs - this is a static dataset that may be used for join operations at some point in the development of the project.
+
+### 2) Investment Portfolio Recommendations:
+    Goal: Profile the user to determine their level of risk adversity.  Based on this, recommend investment portfolios and show live feed of how each one is trending.
+
+    How: Use facebook and amazon to profile the user and determine their level of risk adversity.  Use Yahoo Finance to recommend a portfolio balanced with stocks, short term reserves, and bonds.
