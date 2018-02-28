@@ -1,0 +1,12 @@
+Application User Stories
+
+
+1)	A user should be able to login to the system using their Facebook account.  Once logged in, the user’s preferences should persist over multiple sessions, they should be able to see their search history.
+
+2)	A user should be able to input preferences relating to how big of a crowd they prefer, and how long they are willing to wait in line at a bar/restaurant/club.  The recommendation system should tailor its results based on these preferences.
+
+3)	A user should be able to input key words that they prefer from yelp reviews, and the recommendation system should tailor its results based on these preferences.
+
+4)	The user should be able to order an Uber to their desired location from within the app.
+
+5)	The user should be able to input preferences for how far they wish to travel. The app should restrict search based on location.
