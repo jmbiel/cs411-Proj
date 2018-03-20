@@ -6,4 +6,11 @@
         <input type="text" name="search_input">
         <input type="submit" value="submit">
     </form>
+    {% if data %}
+        {% for item in data %}
+        <p>Rating: {{item[0]}}</p>
+        <p>Review: {{item[1]}}</p>
+        {% endfor %}
+    {% endif %}
+
 </body>
