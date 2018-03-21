@@ -4,15 +4,9 @@ from urllib.parse import quote
 import requests
 
 """
-yelp
-
-Client ID
-iQaMQisiPaQkU7QSSkzG3A
-
-
-API Key
-H1ZaDuODlr5cjTjZ-yxUWt5us1U5VPdOXqB4f8We9-3Q1VQyt-jem1BTDCg4ZthQfLYsNF4TILRU6s2jQ8f93_tHrgEuKhoO5fatTBEdx6BrG-t9fM_3DotojmixWnYx
-
+Yelp -- RELEVANT INFORMATION
+Client ID: iQaMQisiPaQkU7QSSkzG3A
+API Key: H1ZaDuODlr5cjTjZ-yxUWt5us1U5VPdOXqB4f8We9-3Q1VQyt-jem1BTDCg4ZthQfLYsNF4TILRU6s2jQ8f93_tHrgEuKhoO5fatTBEdx6BrG-t9fM_3DotojmixWnYx
 """
 app = Flask(__name__)
 
