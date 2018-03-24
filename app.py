@@ -4,15 +4,9 @@ from urllib.parse import quote
 import requests
 
 """
-yelp
-
-Client ID
-iQaMQisiPaQkU7QSSkzG3A
-
-
-API Key
-H1ZaDuODlr5cjTjZ-yxUWt5us1U5VPdOXqB4f8We9-3Q1VQyt-jem1BTDCg4ZthQfLYsNF4TILRU6s2jQ8f93_tHrgEuKhoO5fatTBEdx6BrG-t9fM_3DotojmixWnYx
-
+Yelp -- RELEVANT INFORMATION
+Client ID: iQaMQisiPaQkU7QSSkzG3A
+API Key: H1ZaDuODlr5cjTjZ-yxUWt5us1U5VPdOXqB4f8We9-3Q1VQyt-jem1BTDCg4ZthQfLYsNF4TILRU6s2jQ8f93_tHrgEuKhoO5fatTBEdx6BrG-t9fM_3DotojmixWnYx
 """
 app = Flask(__name__)
 
@@ -30,7 +24,15 @@ def yelp_api_call():
     business = getBusiness(user_input)
     reviews = getReview(business)
 
-    return render_template('index.html', data=reviews)
+    address = business['location']['display_address'][0] + business['location']['display_address'][1]
+    pic = business['image_url']
+    is_closed = business['is_closed']
+    name = business['name']
+    print(business)
+    # # print(business['if_closed'])
+    # print(business)
+    # print(type(business['is_closed']))
+    return render_template('reviews.html', reviews=reviews, address = address, pic = pic, hours = ifclose(is_closed), name = name)
 
 def getBusiness(user_input):
     url = '{0}{1}'.format(YELP_API_HOST, quote(YELP_SEARCH_PATH.encode('utf8')))
@@ -58,5 +60,11 @@ def getReview(business):
     formatted_reviews = [(x['rating'], x['text']) for x in reviews]
     return formatted_reviews
 
+def ifclose(x):
+    if x:
+        return "Closed"
+    else:
+        return "Open"
+
 if __name__ == '__main__':
-    app.run(port=8080, debug=True)
+    app.run(port=8000, debug=True)
