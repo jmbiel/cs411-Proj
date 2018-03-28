@@ -1,0 +1,22 @@
+Reasons for using Flask with Python as backend:
+    1) The backend of our application will be pulling data from numerous sources, and doing a number
+       of transformations with such data.  Python is known for being great (and efficient) withdata 
+       manipulation.
+    
+    2) Python has a number of libraries built in for API requests, making it simple to aquire data 
+       using Web-API's. 
+    
+    3) Flask is inherently simple and easy to follow when it comes to making a REST-API.  Team members
+       can easily follow along with any features added to the application.
+
+Reasons for using Jinja2 as front-end:
+    1) Integrates seamlessly with Flask -- extremely easy to pass data back and forth.
+
+    2) Logic is very simple and easily digestible.
+
+
+Ultimately, our decision to use Flask had a cascading effect on what we decided to use for the rest of the
+stack.  The reality of doing complex data manipulation & transformations in javascript is ugly -- so we knew
+we wanted to use Python in the backend, and Flask seemed like the simplest way to do so. Flask integrates 
+extremely well with Jinja2 on the front-end, making the passing of data between the front and backend extremely
+simple. Also, styling with Jinja2 works exactly the same as it would with a static HTML page.
