@@ -1,0 +1,10 @@
+{
+    "_comment": "Mongo-DB Configuration for CS 411 Project",
+    "repo": {
+        "name": "Nightlife_Reccomendation"
+    },
+    "admin": {
+        "name": "group5",
+        "pwd": "group5"
+    }
+}
