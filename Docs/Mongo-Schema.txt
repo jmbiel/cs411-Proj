@@ -1,0 +1,25 @@
+Collection - Nightlife_Reccomendation.search_terms:
+    This collection logs the searches that users enter. Normally we would make an API call to yelp to grab the
+    businesses that are associated with the search term, however we cache the searches so that we can grab them
+    from the database (this is quicker than making an API call). 
+
+The following is the schema:
+{
+    "term" : "search_term" //KEY and Required field
+    "response" : { //required field
+        "business_name"
+    }
+}
+
+Collection - Nightlife_Reccomendation.reviews:
+    This collections logs the restaurant/club/bar reviews that our users will search for. Normally we would
+    make an API call to grab these reviews, however since we cache them we may be able to grab them from our
+    database rather than calling the API.
+
+The following is the schema:
+{
+    "business" : "name" // KEY and Required field 
+    "response" : { //required field
+        "reviews": []
+    }
+}
