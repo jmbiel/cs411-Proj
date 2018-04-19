@@ -53,11 +53,19 @@ def getBusiness(user_input):
         'limit' : 1
     }
     
-    if repo['Nightlife_Reccomendations.search_terms'].find({user_input}) == 0:
+    count = repo['Nightlife_Reccomendation.search_terms'].find({"term" : user_input}).count()
+    print("COUNT", count)
+    if repo['Nightlife_Reccomendation.search_terms'].find({"term" : user_input}).count() == 0:
+        print("IN THE IF CASE")
         response = requests.request('GET', url, headers=headers, params=url_params).json()
-        repo['Nightlife_Reccomendations.search_terms'].insert({user_input: response})
+        db_insert = {}
+        db_insert["term"] = user_input
+        db_insert['response'] = response
+        repo['Nightlife_Reccomendations.search_terms'].insert(db_insert)
     else:
-        response = repo['Nightlife_Reccomendations.search_terms'].find({'search_term'})
+        print("IN THE ELSE CASE")
+        response = repo['Nightlife_Reccomendation.search_terms'].find({"term" : user_inputs})
+        print(response)
     return response['businesses'][0]
 
 def getReview(business):
