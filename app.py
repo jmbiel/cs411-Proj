@@ -72,7 +72,6 @@ def getReview(business):
     }
 
     if repo['Nightlife_Reccomendation.reviews'].find({"business": business}).count() == 0:
-        print("IN THE IF CASE")
         response = requests.request('GET', url, headers=headers).json()
         db_insert = {}
         db_insert['business'] = business
@@ -80,7 +79,6 @@ def getReview(business):
         repo['Nightlife_Reccomendation.reviews'].insert(db_insert)
         reviews = response['reviews']
     else:
-        print("IN THE ELSE CASE")
         response = repo['Nightlife_Reccomendation.reviews'].find({'business': business})[0]
         reviews = response['response']['reviews']
 
