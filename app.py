@@ -2,6 +2,7 @@ import flask
 from flask import Flask, render_template
 from urllib.parse import quote
 import requests
+from pymongo import MongoClient
 
 """
 Yelp -- RELEVANT INFORMATION
@@ -13,6 +14,12 @@ app = Flask(__name__)
 YELP_API_HOST = 'https://api.yelp.com'
 YELP_SEARCH_PATH = '/v3/businesses/search'
 YELP_API_KEY = 'H1ZaDuODlr5cjTjZ-yxUWt5us1U5VPdOXqB4f8We9-3Q1VQyt-jem1BTDCg4ZthQfLYsNF4TILRU6s2jQ8f93_tHrgEuKhoO5fatTBEdx6BrG-t9fM_3DotojmixWnYx'
+
+# Setup Mongo DB connection
+client = MongoClient()
+repo = client["Nightlife_Reccomendation"]
+repo.authenticate('group5', 'group5')
+
 
 @app.route("/")
 def render_home():
@@ -47,6 +54,7 @@ def getBusiness(user_input):
     }
 
     response = requests.request('GET', url, headers=headers, params=url_params).json()
+    print(response)
     return response['businesses'][0]
 
 def getReview(business):
