@@ -53,12 +53,18 @@ def getBusiness(user_input):
         'limit' : 1
     }
     
-    if repo['Nightlife_Reccomendations.search_terms'].find({user_input}) == 0:
+    count = repo['Nightlife_Reccomendation.search_terms'].find({"term" : user_input}).count()
+    if repo['Nightlife_Reccomendation.search_terms'].find({"term" : user_input}).count() == 0:
         response = requests.request('GET', url, headers=headers, params=url_params).json()
-        repo['Nightlife_Reccomendations.search_terms'].insert({user_input: response})
+        db_insert = {}
+        db_insert['term'] = user_input
+        db_insert['response'] = response
+        repo['Nightlife_Reccomendation.search_terms'].insert(db_insert)
+        ret_val = response
     else:
-        response = repo['Nightlife_Reccomendations.search_terms'].find({'search_term'})
-    return response['businesses'][0]
+        response = repo['Nightlife_Reccomendation.search_terms'].find({"term" : user_input})[0]
+        ret_val = response['response']
+    return ret_val['businesses'][0]
 
 def getReview(business):
     url = 'https://api.yelp.com/v3/businesses/' + business['id'] + '/reviews'
