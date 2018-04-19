@@ -28,7 +28,7 @@ def yelp_api_call():
     pic = business['image_url']
     is_closed = business['is_closed']
     name = business['name']
-    print(business)
+    #print(business)
     # # print(business['if_closed'])
     # print(business)
     # print(type(business['is_closed']))
