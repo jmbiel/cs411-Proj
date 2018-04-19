@@ -52,10 +52,18 @@ def getBusiness(user_input):
         'location' : 'Boston, MA',
         'limit' : 1
     }
-
-    response = requests.request('GET', url, headers=headers, params=url_params).json()
-    print(response)
-    return response['businesses'][0]
+    
+    if repo['Nightlife_Reccomendation.search_terms'].find({"term" : user_input}).count() == 0:
+        response = requests.request('GET', url, headers=headers, params=url_params).json()
+        db_insert = {}
+        db_insert['term'] = user_input
+        db_insert['response'] = response
+        repo['Nightlife_Reccomendation.search_terms'].insert(db_insert)
+        ret_val = response
+    else:
+        response = repo['Nightlife_Reccomendation.search_terms'].find({"term" : user_input})[0]
+        ret_val = response['response']
+    return ret_val['businesses'][0]
 
 def getReview(business):
     url = 'https://api.yelp.com/v3/businesses/' + business['id'] + '/reviews'
@@ -63,8 +71,19 @@ def getReview(business):
         'Authorization': 'Bearer %s' % YELP_API_KEY
     }
 
-    response = requests.request('GET', url, headers=headers).json()
-    reviews = response['reviews']
+    if repo['Nightlife_Reccomendation.reviews'].find({"business": business}).count() == 0:
+        print("IN THE IF CASE")
+        response = requests.request('GET', url, headers=headers).json()
+        db_insert = {}
+        db_insert['business'] = business
+        db_insert['response'] = response
+        repo['Nightlife_Reccomendation.reviews'].insert(db_insert)
+        reviews = response['reviews']
+    else:
+        print("IN THE ELSE CASE")
+        response = repo['Nightlife_Reccomendation.reviews'].find({'business': business})[0]
+        reviews = response['response']['reviews']
+
     formatted_reviews = [(x['rating'], x['text']) for x in reviews]
     return formatted_reviews
 
