@@ -52,9 +52,12 @@ def getBusiness(user_input):
         'location' : 'Boston, MA',
         'limit' : 1
     }
-
-    response = requests.request('GET', url, headers=headers, params=url_params).json()
-    print(response)
+    
+    if repo['Nightlife_Reccomendations.search_terms'].find({user_input}) == 0:
+        response = requests.request('GET', url, headers=headers, params=url_params).json()
+        repo['Nightlife_Reccomendations.search_terms'].insert({user_input: response})
+    else:
+        response = repo['Nightlife_Reccomendations.search_terms'].find({'search_term'})
     return response['businesses'][0]
 
 def getReview(business):
