@@ -53,7 +53,6 @@ def getBusiness(user_input):
         'limit' : 1
     }
     
-    count = repo['Nightlife_Reccomendation.search_terms'].find({"term" : user_input}).count()
     if repo['Nightlife_Reccomendation.search_terms'].find({"term" : user_input}).count() == 0:
         response = requests.request('GET', url, headers=headers, params=url_params).json()
         db_insert = {}
@@ -72,8 +71,19 @@ def getReview(business):
         'Authorization': 'Bearer %s' % YELP_API_KEY
     }
 
-    response = requests.request('GET', url, headers=headers).json()
-    reviews = response['reviews']
+    if repo['Nightlife_Reccomendation.reviews'].find({"business": business}).count() == 0:
+        print("IN THE IF CASE")
+        response = requests.request('GET', url, headers=headers).json()
+        db_insert = {}
+        db_insert['business'] = business
+        db_insert['response'] = response
+        repo['Nightlife_Reccomendation.reviews'].insert(db_insert)
+        reviews = response['reviews']
+    else:
+        print("IN THE ELSE CASE")
+        response = repo['Nightlife_Reccomendation.reviews'].find({'business': business})[0]
+        reviews = response['response']['reviews']
+
     formatted_reviews = [(x['rating'], x['text']) for x in reviews]
     return formatted_reviews
 
