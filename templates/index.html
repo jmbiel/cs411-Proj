@@ -14,6 +14,9 @@ body, html {
 </style>
 
 <body>
+    {% if user_name %}
+        <h1>Welcome @{{ user_name }}</h1>
+    {% endif %}
     <div class="w3-sand w3-grayscale w3-large">
 <span class="w3-text-black" style="font-size:50px">Nightlife Recommendation</span>
     <img src= "http://1.bp.blogspot.com/-2norFrllMv8/VNk2dx9Fz3I/AAAAAAAAi1E/cFHTNiCC30E/s1600/yet%2Banother%2Bcat%2Bcartoon.jpg" alt = "A cate sitting in a bar asking for water" width = "400" height = "500" style="width:50%;max-width:1000px;margin-top:32px;">
