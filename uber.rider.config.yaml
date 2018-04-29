@@ -1,0 +1,9 @@
+client_id: beNUBvtI1_h1iTJXFUAQ4ZBPmYTrN_Ks
+client_secret: AwIjw02tTMha3FRspJZHf9vturtiYlXPA2PELayL
+redirect_url: http://localhost:8000/uber/connect
+scopes:
+    - delivery
+    - history
+    - places
+    - profile
+    - ride_widgets
