@@ -19,7 +19,7 @@ body, html {
     {% endif %}
 
     <form method="POST" action="{{ url_for('returnBusinessList') }}">
-        <label for="zip_code" style="font-size:15px" >Please input your zipcode: </label>
+        <label for="zip_code" style="font-size:15px" >Please enter your current address: </label>
         <input type="text" name="location_input">
         <label for="radius" style="font-size:15px">Please input how many miles you are willing to travel:</label>
         <input type="text" name="radius_input">
