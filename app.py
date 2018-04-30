@@ -4,25 +4,15 @@ from flask import Flask, render_template, redirect, url_for, request
 from urllib.parse import quote
 import requests
 from pymongo import MongoClient
-from flask_dance.contrib.twitter import make_twitter_blueprint, twitter
 from uber_rides.session import Session
 from uber_rides.client import UberRidesClient
 from uber_rides.auth import AuthorizationCodeGrant
 from uber_rides.errors import ClientError, ServerError, UberIllegalState
 from yaml import safe_load
 
-"""
-Yelp -- RELEVANT INFORMATION
-Client ID: iQaMQisiPaQkU7QSSkzG3A
-API Key: H1ZaDuODlr5cjTjZ-yxUWt5us1U5VPdOXqB4f8We9-3Q1VQyt-jem1BTDCg4ZthQfLYsNF4TILRU6s2jQ8f93_tHrgEuKhoO5fatTBEdx6BrG-t9fM_3DotojmixWnYx
-"""
 app = Flask(__name__)
 app.secret_key = "group5_secret_key"
 
-YELP_API_HOST = 'https://api.yelp.com'
-YELP_SEARCH_PATH = '/v3/businesses/search'
-YELP_API_KEY = 'H1ZaDuODlr5cjTjZ-yxUWt5us1U5VPdOXqB4f8We9-3Q1VQyt-jem1BTDCg4ZthQfLYsNF4TILRU6s2jQ8f93_tHrgEuKhoO5fatTBEdx6BrG-t9fM_3DotojmixWnYx'
-GOOGLE_API_KEY = 'AIzaSyCSZiUzLj08txto61StvlHBcAXOy2McoqU'
 
 
 # Setup Mongo DB connection
@@ -32,13 +22,13 @@ repo.authenticate('group5', 'group5')
 
 # Setup Uber OAuth
 with open('uber.rider.config.yaml', 'r') as config_file:
-    config = safe_load(config_file)
+    uber_config = safe_load(config_file)
     
 credentials = {}
-credentials['client_id'] = config['client_id']
-credentials['client_secret'] = config['client_secret']
-credentials['redirect_url'] = config['redirect_url']
-credentials['scopes'] = set(config['scopes'])
+credentials['client_id'] = uber_config['client_id']
+credentials['client_secret'] = uber_config['client_secret']
+credentials['redirect_url'] = uber_config['redirect_url']
+credentials['scopes'] = set(uber_config['scopes'])
 
 auth_flow = AuthorizationCodeGrant(
     credentials['client_id'],
@@ -47,7 +37,6 @@ auth_flow = AuthorizationCodeGrant(
     credentials['redirect_url']
     )
 
-uber_client = None 
 
 @app.route("/")
 def authorize():
@@ -64,7 +53,9 @@ def authorize():
 def home():
     if type(uber_client) != None:
         rider_profile = uber_client.get_rider_profile().json
-        return render_template('index.html', name=rider_profile['first_name'] + " " + rider_profile['last_name'])
+        return render_template('index.html',
+                                name=rider_profile['first_name'] + " " + rider_profile['last_name']
+                                )
     else:
         return render_template('index.html')
 
@@ -79,6 +70,9 @@ def uber_login():
 
 @app.route("/returnBusinessList", methods=['GET', 'POST'])
 def returnBusinessList():
+    with open ('yelpAPI.config.yaml', 'r') as config_file:
+        yelp_config = safe_load(config_file)
+
     zipcode = flask.request.form['location_input']
     radius = flask.request.form['radius_input']
     radius = float(radius) * 0.000621371 
@@ -93,7 +87,7 @@ def returnBusinessList():
     else:
         bar = False 
 
-    url = '{0}{1}'.format(YELP_API_HOST, quote(YELP_SEARCH_PATH.encode('utf8')))
+    url = '{0}{1}'.format(yelp_config['api_host'], quote(yelp_config['search_path'].encode('utf8')))
     headers = {
         'Authorization' : "Bearer %s" % YELP_API_KEY
     }
@@ -117,7 +111,12 @@ def returnBusinessList():
     businesses = []
     for b in response['businesses']:
         business = getBusiness(b['name'])
-        businesses.append([business['name'], getReview(business), business['location']['display_address'], business['image_url'], ifclose(business['is_closed']), zipcode])
+        businesses.append([business['name'],
+                            getReview(business),
+                            business['location']['display_address'],
+                            business['image_url'],
+                            ifclose(business['is_closed']),
+                            zipcode])
 
     return render_template('search.html', businesses=businesses)
 
@@ -131,7 +130,11 @@ def yelp_api_call():
     pic = business['image_url']
     is_closed = business['is_closed']
     name = business['name']
-    return render_template('reviews.html', reviews=reviews, address = address, pic = pic, hours = ifclose(is_closed), name = name)
+    return render_template('reviews.html',
+                            reviews=reviews,
+                            address = address,
+                            pic = pic,
+                            hours = ifclose(is_closed), name = name)
 
 @app.route("/call_uber", methods=['POST'])
 def call_uber():
@@ -155,7 +158,15 @@ def call_uber():
 
     fare=estimate.json.get('fare')
     
-    return render_template('ride_request.html', request=True, confirmed=False, fare=fare['display'], user_lat=user_lat_long['lat'], user_long=user_lat_long['lng'], business_lat=business_loc['latitude'], business_long=business_loc['longitude'], product_id=product_id, fare_id=fare['fare_id'])
+    return render_template('ride_request.html',
+                            request=True, confirmed=False,
+                            fare=fare['display'],
+                            user_lat=user_lat_long['lat'],
+                            user_long=user_lat_long['lng'],
+                            business_lat=business_loc['latitude'],
+                            business_long=business_loc['longitude'],
+                            product_id=product_id,
+                            fare_id=fare['fare_id'])
 
 @app.route("/confirm_uber", methods=['POST'])
 def confirm_uber():
@@ -180,19 +191,25 @@ def confirm_uber():
         
     request = response.json 
     request_id = request.get('request_id')
-    return render_template('ride_request.html', request=False, confirmed=True, request_id=request_id)
+
+    return render_template('ride_request.html',
+                            request=False,
+                            confirmed=True,
+                            request_id=request_id)
 
 @app.route("/cancel_uber", methods=['POST'])
 def cancel_uber():
     request_id = flask.request.form['request_id']
-    print(request_id)
     response = uber_client.cancel_ride(request_id)
     return render_template("ride_cancelled.html")
 
 def getBusiness(user_input):
-    url = '{0}{1}'.format(YELP_API_HOST, quote(YELP_SEARCH_PATH.encode('utf8')))
+    with open('yelpAPI.config.yaml', 'r') as config_file:
+        yelp_config = safe_load(config_file)
+
+    url = '{0}{1}'.format(yelp_config['api_host'], quote(yelp_config['search_path'].encode('utf8')))
     headers = {
-        'Authorization': 'Bearer %s' % YELP_API_KEY
+        'Authorization': 'Bearer %s' % yelp_config['api_key']
     }
 
     url_params = {
@@ -215,9 +232,12 @@ def getBusiness(user_input):
     return ret_val['businesses'][0]
 
 def getReview(business):
+    with open('yelpAPI.config.yaml', 'r') as config_file:
+        yelp_config = safe_load(config_file)
+
     url = 'https://api.yelp.com/v3/businesses/' + business['id'] + '/reviews'
     headers = {
-        'Authorization': 'Bearer %s' % YELP_API_KEY
+        'Authorization': 'Bearer %s' % yelp_config['api_key']
     }
 
     if repo['Nightlife_Reccomendation.reviews'].find({"business": business}).count() == 0:
@@ -235,9 +255,13 @@ def getReview(business):
     return formatted_reviews
 
 def getLatLong(location):
+    with open('googleAPI.config.yaml', 'r') as config_file:
+        google_config = safe_load(config_file)
+
     geocode_url = "https://maps.googleapis.com/maps/api/geocode/json?address={}".format(location)
-    geocode_url += "&key={}".format(GOOGLE_API_KEY)
+    geocode_url += "&key={}".format(google_config['api_key'])
     response = requests.get(geocode_url).json()
+    print("RESPONSE: ", response)
     return response['results'][0]['geometry']['location']
 
 def ifclose(x):
