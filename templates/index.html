@@ -11,15 +11,27 @@ body, html {
     height: 100%;
     font-family: "Inconsolata", sans-serif;
 }
+body { text-align: center; }
 </style>
 
-<body>
+<div class="w3-sand w3-grayscale w3-large">
+
+    <div class="container">
+<div class="centered" style="font-size:90px"> Nightlife Recommendation</div>
+
+</div>
+
+<img src= "http://1.bp.blogspot.com/-2norFrllMv8/VNk2dx9Fz3I/AAAAAAAAi1E/cFHTNiCC30E/s1600/yet%2Banother%2Bcat%2Bcartoon.jpg" alt = "A cate sitting in a bar asking for water" width = "400" height = "500" style="width:60%;max-width:1000px;margin-top:32px;">
+
+</div>
+
+<body class="centered">
     {% if name %}
-        <h1>Welcome {{ name }}</h1>
+        <h1 lass="centered">Welcome {{ name }}</h1>
     {% endif %}
 
     <form method="POST" action="{{ url_for('returnBusinessList') }}">
-        <label for="zip_code" style="font-size:15px" >Please enter your current address: </label>
+        <label for="zip_code" style="font-size:15px">Please enter your current address: </label>
         <br>
         <input type="text" name="location_input">
         <br>
@@ -33,17 +45,9 @@ body, html {
         <input type="checkbox" name="bar">
         <input type="submit" value="submit">
     </form>
-    <div class="w3-sand w3-grayscale w3-large">
-<span class="w3-text-black" style="font-size:50px">Nightlife Recommendation</span>
-    <img src= "http://1.bp.blogspot.com/-2norFrllMv8/VNk2dx9Fz3I/AAAAAAAAi1E/cFHTNiCC30E/s1600/yet%2Banother%2Bcat%2Bcartoon.jpg" alt = "A cate sitting in a bar asking for water" width = "400" height = "500" style="width:50%;max-width:1000px;margin-top:32px;">
-    <br>
+ <br>
+  <br>
 
-    {% if data %}
-        {% for item in data %}
-        <p>Rating: {{item[0]}}</p>
-        <p>Review: {{item[1]}}</p>
-        {% endfor %}
-    {% endif %}
 </div>
 </body>
 </html>
