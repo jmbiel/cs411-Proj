@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        {{user_loc}}
+        {{business_loc}}
+        {% if request %}
+        <h2>Estimated Fare Charge: {{fare}}</h2>
+        <form method="POST" action="{{ url_for('confirm_uber') }}">
+            <input type="hidden" name="user_lat" value="{{user_lat}}">
+            <input type="hidden" name="user_long" value="{{user_long}}">
+            <input type="hidden" name="business_lat" value="{{business_lat}}">
+            <input type="hidden" name="business_long" value="{{business_long}}">
+            <input type="hidden" name="product_id" value="{{product_id}}">
+            <input type="hidden" name="fare_id" value="{{fare_id}}">
+            <input type="submit" value="Confirm">
+        </form>
+        {% endif %}
+        <form method="GET" action="/">
+            <input type="submit" value="Cancel">
+        </form>
+    </body>
+</html>

@@ -46,6 +46,11 @@ body, html {
             <p>Rating: {{item[0]}}</p>
             <p>Review: {{item[1]}}</p>
         {% endfor %}
+        <form method="POST" action="{{ url_for('call_uber') }}">
+            <input type="hidden" name="business_name" value="{{ business[0]}}">
+            <input type="hidden" name="user_loc" value="{{ business[5] }}">
+            <input type="submit" value="Call Uber">
+        </form>
     {% endfor %}
 {% endif %}
 
