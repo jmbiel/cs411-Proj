@@ -155,7 +155,7 @@ def call_uber():
 
     fare=estimate.json.get('fare')
     
-    return render_template('ride_request.html', request=True, fare=fare['display'], user_lat=user_lat_long['lat'], user_long=user_lat_long['lng'], business_lat=business_loc['latitude'], business_long=business_loc['longitude'], product_id=product_id, fare_id=fare['fare_id'])
+    return render_template('ride_request.html', request=True, confirmed=False, fare=fare['display'], user_lat=user_lat_long['lat'], user_long=user_lat_long['lng'], business_lat=business_loc['latitude'], business_long=business_loc['longitude'], product_id=product_id, fare_id=fare['fare_id'])
 
 @app.route("/confirm_uber", methods=['POST'])
 def confirm_uber():
@@ -165,17 +165,29 @@ def confirm_uber():
     business_long = flask.request.form['business_long']
     product_id = flask.request.form['product_id']
     fare_id = flask.request.form['fare_id']
-    response = uber_client.request_ride(
-        product_id=product_id,
-        start_latitude=float(user_lat),
-        start_longitude=float(user_long),
-        end_latitude=float(business_lat),
-        end_longitude=float(business_long),
-        seat_count=2,
-        fare_id=fare_id
-    )
+    try:
+        response = uber_client.request_ride(
+            product_id=product_id,
+            start_latitude=float(user_lat),
+            start_longitude=float(user_long),
+            end_latitude=float(business_lat),
+            end_longitude=float(business_long),
+            seat_count=2,
+            fare_id=fare_id
+        )
+    except ClientError as error:
+        return "Uber Error: {0}, {1}".format(error.errors, error.message)
+        
+    request = response.json 
+    request_id = request.get('request_id')
+    return render_template('ride_request.html', request=False, confirmed=True, request_id=request_id)
 
-    return "RIDE ORDERED"
+@app.route("/cancel_uber", methods=['POST'])
+def cancel_uber():
+    request_id = flask.request.form['request_id']
+    print(request_id)
+    response = uber_client.cancel_ride(request_id)
+    return render_template("ride_cancelled.html")
 
 def getBusiness(user_input):
     url = '{0}{1}'.format(YELP_API_HOST, quote(YELP_SEARCH_PATH.encode('utf8')))

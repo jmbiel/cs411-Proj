@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
-    <body>
-        {{user_loc}}
-        {{business_loc}}
+    <body> 
+        <a href="/">Home</a>
         {% if request %}
         <h2>Estimated Fare Charge: {{fare}}</h2>
         <form method="POST" action="{{ url_for('confirm_uber') }}">
@@ -14,9 +13,16 @@
             <input type="hidden" name="fare_id" value="{{fare_id}}">
             <input type="submit" value="Confirm">
         </form>
-        {% endif %}
         <form method="GET" action="/">
             <input type="submit" value="Cancel">
         </form>
+        {% endif %}
+        {% if confirmed %}
+            <p>Your uber is on the way... Press the cancel button to cancel the ride.</p>
+            <form method="POST" action="{{ url_for('cancel_uber') }}">
+                <input type="hidden" name="request_id" value="{{request_id}}">
+                <input type="submit" value="Cancel">
+            </form>
+        {% endif %}
     </body>
 </html>
