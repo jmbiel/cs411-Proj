@@ -89,7 +89,7 @@ def returnBusinessList():
 
     url = '{0}{1}'.format(yelp_config['api_host'], quote(yelp_config['search_path'].encode('utf8')))
     headers = {
-        'Authorization' : "Bearer %s" % YELP_API_KEY
+        'Authorization' : "Bearer %s" % yelp_config['api_key']
     }
 
     url_params = {
