@@ -1,0 +1,3 @@
+api_host: https://api.yelp.com
+search_path: /v3/businesses/search
+api_key: https://api.yelp.com
