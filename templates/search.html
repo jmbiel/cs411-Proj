@@ -6,6 +6,42 @@
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
 <style>
+.container {
+    position: relative;
+    text-align: center;
+    color: white;
+}
+
+.bottom-left {
+    position: absolute;
+    bottom: 8px;
+    left: 16px;
+}
+
+.top-left {
+    position: absolute;
+    top: 8px;
+    left: 16px;
+}
+
+.top-right {
+    position: absolute;
+    top: 8px;
+    right: 16px;
+}
+
+.bottom-right {
+    position: absolute;
+    bottom: 8px;
+    right: 16px;
+}
+
+.centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
 body, html {
     height: 100%;
     font-family: "Inconsolata", sans-serif;
@@ -29,66 +65,104 @@ body, html {
 }
 </style>
 <body>
-<a href="/">Home</a>
+
+  <div class="w3-top">
+  <div class="w3-row w3-padding w3-black">
+    <div class="w3-col s3">
+      <a href="/" class="w3-button w3-block w3-black">HOME</a>
+  </div>
+  </div>
+  </div>
+
+<!-- <strong><a href="/">Home</a></strong> -->
 <!-- Links (sit on top) -->
 
 
 <!-- Header with image -->
 {% if businesses %}
+ <<header class="bgimg w3-display-container w3-grayscale-min" id="home">
+
+<div class="container">
+<img src="https://astanatimes.com/wp-content/uploads/2016/10/lonelyplanet.com_-1024x683.jpg" alt="nigthlife" style="width:100%;">
+<div class="centered" style="font-size:90px"> Business list</div>
+
+</div>
+
+<!-- <span class="centered" style="font-size:90px">Business list</span>  -->
+<!-- <div class="centered">Centered</div> -->
+
+  <!-- <div class="w3-display-middle w3-center">
+         <span class="w3-text-black" style="font-size:90px">Business list</span>
+         </div> -->
+</header>
+
     {% for business in businesses %}
-        <p>Name: {{business[0]}}</p>
+      <div class="w3-sand w3-grayscale w3-large">
+      <!--   <p>Name: {{business[0]}}</p>
         <p>Address: {{business[2][0]}}, {{business[2][1]}}</p>
         <p>Open or Closed: {{business[4]}}</p>
         <img src={{business[3]}}>      
+ -->
 
-          
+        <!-- <div class="w3-container" id="business_info">
+        <div class="w3-content" style="max-width:700px"> -->
+
+<!--         <img src={{business[3]}}>  --> 
+<!--         <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide"></span></h5> -->
+        <div class="w3-container" id="info">
+          <div class="w3-content" style="max-width:700px">
+            <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">ABOUT THE PLACE</span></h5>
+
+        <p><strong>Name:</strong> {{business[0]}}</p>
+        <p><strong>Open or Closed:</strong> {{business[4]}}</p>
+        <p><strong>Address:</strong> {{business[2][0]}}, {{business[2][1]}}</p>
+        <img src={{business[3]}} style="width:100%;max-width:1000px" class="w3-margin-top"> 
+      </div>
+    </div>
+<!-- 
+ <div class="w3-display-bottomleft w3-center w3-padding-large w3-hide-small">
+        <span class="w3-tag"> img src={{business[3]}}</span>
+  </div>
+
+        <p>Name: {{business[0]}}</p>
+        <p>Open or Closed: {{business[4]}}</p>
+        <p>Address: {{business[2][0]}}, {{business[2][1]}}</p> -->
+
+        <!-- <div class="w3-display-middle w3-center">
+         <span class="w3-text-black" style="font-size:90px">{{business[0]}}</span>
+         </div>
+        <div class="w3-display-bottomright w3-center w3-padding-large">
+          <span class="w3-text-black">{{business[2][0]}}, {{business[2][1]}}</span>
+         </div> -->
+  
+
+        <div class="w3-container" id="Review">
+          <div class="w3-content" style="max-width:700px">
+           <!--  <h5 class="w3-center w3-padding-64"><span class="w3-tag w3-wide">REVIEWS</span></h5> -->
+        <p><strong>Reviews: </strong></p>
         {% for item in business[1] %}
             <p>Rating: {{item[0]}}</p>
             <p>Review: {{item[1]}}</p>
         {% endfor %}
+
         <form method="POST" action="{{ url_for('call_uber') }}">
             <input type="hidden" name="business_name" value="{{ business[0]}}">
             <input type="hidden" name="user_loc" value="{{ business[5] }}">
-            <input type="submit" value="Call Uber">
+            <input type="submit" class="w3-center" value="Call Uber">
         </form>
+
+     </div>
+     </div>
+    <!--  </div>
+    </div> -->
+    <br>
+     </div>
+
+
     {% endfor %}
 {% endif %}
 
 
-<!--     <div id="Eat" class="w3-container menu w3-padding-48 w3-card">
-      <h5>Bread Basket</h5>
-      <p class="w3-text-grey">Assortment of fresh baked fruit breads and muffins 5.50</p><br>
-    
-      <h5>Honey Almond Granola with Fruits</h5>
-      <p class="w3-text-grey">Natural cereal of honey toasted oats, raisins, almonds and dates 7.00</p><br>
-    
-      <h5>Belgian Waffle</h5>
-      <p class="w3-text-grey">Vanilla flavored batter with malted flour 7.50</p><br>
-    
-      <h5>Scrambled eggs</h5>
-      <p class="w3-text-grey">Scrambled eggs, roasted red pepper and garlic, with green onions 7.50</p><br>
-    
-      <h5>Blueberry Pancakes</h5>
-      <p class="w3-text-grey">With syrup, butter and lots of berries 8.50</p>
-    </div>
 
-    <div id="Drinks" class="w3-container menu w3-padding-48 w3-card">
-      <h5>Coffee</h5>
-      <p class="w3-text-grey">Regular coffee 2.50</p><br>
-    
-      <h5>Chocolato</h5>
-      <p class="w3-text-grey">Chocolate espresso with milk 4.50</p><br>
-    
-      <h5>Corretto</h5>
-      <p class="w3-text-grey">Whiskey and coffee 5.00</p><br>
-    
-      <h5>Iced tea</h5>
-      <p class="w3-text-grey">Hot tea, except not hot 3.00</p><br>
-    
-      <h5>Soda</h5>
-      <p class="w3-text-grey">Coke, Sprite, Fanta, etc. 2.50</p>
-    </div>  
-    <img src="https://s3-media3.fl.yelpcdn.com/bphoto/oF9AqeZFT3Kg0N4peP_-4A/o.jpg" style="width:100%;max-width:1000px;margin-top:32px;"> -->
-    
 </body>
 </html>

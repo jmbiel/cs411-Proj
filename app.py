@@ -11,7 +11,7 @@ from uber_rides.errors import ClientError, ServerError, UberIllegalState
 from yaml import safe_load
 
 app = Flask(__name__)
-app.secret_key = "group5_secret_key"
+app.secret_key = "group5_secret_key, ITS SUPER SECRET"
 
 
 
@@ -37,32 +37,32 @@ auth_flow = AuthorizationCodeGrant(
     credentials['redirect_url']
     )
 
+uber_client = None
 
 @app.route("/")
 def authorize():
-    """
-    if not twitter.authorized:
-        return redirect(url_for('twitter.login'))
-    
-    account_info = twitter.get('account/settings.json').json()
-    """
-    #return render_template("index.html", user_name=account_info['screen_name'])
+    """ Immediately authorize user with uber as soon as they enter the site
+        Relatively integral to the entire use of the application             """
     return redirect(auth_flow.get_authorization_url())
 
 @app.route("/home")
 def home():
+    """ Render the home page with the users information from Uber           """
     if type(uber_client) != None:
         rider_profile = uber_client.get_rider_profile().json
         return render_template('index.html',
                                 name=rider_profile['first_name'] + " " + rider_profile['last_name']
                                 )
+    
+    # If the uber_client is null, we need to reauthorize the user
     else:
-        return render_template('index.html')
+        return redirect('/')
 
 
 
 @app.route('/uber/connect')
 def uber_login():
+    """  Call back URI for uber oauth -- sets up the uber_client object and initializes a session """
     session = auth_flow.get_session(request.url)
     global uber_client
     uber_client = UberRidesClient(session)
@@ -70,6 +70,14 @@ def uber_login():
 
 @app.route("/returnBusinessList", methods=['GET', 'POST'])
 def returnBusinessList():
+    """     Logic for returning all businesses based on user preferences
+            Performs Yelp API call to get list, then hits functions below
+                    for more information on each business.                 """
+
+    # If uber_client is null, need to reauthorize the user
+    if type(uber_client) == None:
+        return redirect('/')
+
     with open ('yelpAPI.config.yaml', 'r') as config_file:
         yelp_config = safe_load(config_file)
 
@@ -122,6 +130,7 @@ def returnBusinessList():
 
 @app.route("/yelp_api_call", methods=['POST'])
 def yelp_api_call():
+    """     Deprecated endpoint -- used for testing     """
     user_input = flask.request.form['search_input']
     business = getBusiness(user_input)
     reviews = getReview(business)
@@ -138,6 +147,13 @@ def yelp_api_call():
 
 @app.route("/call_uber", methods=['POST'])
 def call_uber():
+    """    Endpoint for calling uber -- grabs all necessary location information
+            which is passed from the front-end, and makes API call to get an 
+                            estimate of the fare charge.                           """
+
+    if type(uber_client) == None:
+        redirect('/')
+
     business_name = flask.request.form['business_name']
     business = getBusiness(business_name)
     business_loc = business['coordinates']
@@ -170,6 +186,11 @@ def call_uber():
 
 @app.route("/confirm_uber", methods=['POST'])
 def confirm_uber():
+    """     Endpoint for when the user confirms the uber based on fare estimate.
+                    Makes another API request that confirms the uber.           """
+    if type(uber_client) == None:
+        redirect('/')
+
     user_lat = flask.request.form['user_lat']
     user_long = flask.request.form['user_long']
     business_lat = flask.request.form['business_lat']
@@ -199,6 +220,9 @@ def confirm_uber():
 
 @app.route("/cancel_uber", methods=['POST'])
 def cancel_uber():
+    """     API endpoint for if user decides to cancel uber.  Makes an
+            API call to uber to cancel ride based on the request_id.        """
+
     request_id = flask.request.form['request_id']
     response = uber_client.cancel_ride(request_id)
     return render_template("ride_cancelled.html")
@@ -230,6 +254,38 @@ def getBusiness(user_input):
         ret_val = response['response']
     
     return ret_val['businesses'][0]
+
+@app.route('/update_uber', methods=['POST'])
+def update_uber():
+    if type(uber_client) == None:
+        redirect('/')
+    
+    request_id = flask.request.form['request_id']
+    response = uber_client.get_ride_details(request_id)
+    ride = response.json
+    status = ride['status']
+    status_str = ""
+
+    if status == 'processing':
+        status_str = "Processing"
+    elif status == 'no_drivers_available':
+        status_str = "No Drivers Available"
+    elif status == 'accepted':
+        status_str = "Accepted"
+    elif status == 'arriving':
+        status_str = "Arriving"
+    elif status == 'in_progress':
+        status_str = "In Progress"
+    elif status == 'driver_canceled':
+        status_str = "Drive Canceled"
+    elif status == 'rider_canceled':
+        status_str = "Rider Canceled"
+    elif status == 'completed':
+        status_str = "Completed"
+    else:
+        status_str = "Error: " + status
+    
+    return render_template('ride_request.html', confirmed=True, request=False, request_id=request_id, update=status_str)
 
 def getReview(business):
     with open('yelpAPI.config.yaml', 'r') as config_file:
